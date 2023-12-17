@@ -1,5 +1,8 @@
 from rest_framework.response import Response
+from django.http import JsonResponse
 from rest_framework.decorators import api_view, permission_classes
+from django.views.decorators.http import require_http_methods
+from django.contrib.auth.decorators import user_passes_test
 
 from django.contrib.auth.models import User as us
 
@@ -42,11 +45,28 @@ def update_user(request, id):
     return Response('Пользователь зменен спешно!')
 
 @api_view(['GET', 'DELETE'])
-def del_user(request, id):
-    user = User.objects.get(pk=id)
+def del_user(request, user_id):
+    user = User.objects.get(pk=user_id)
     if request.method == "GET":
         return Response(f"Вы уверены сто хотите удалить пользователя? {user.username}")
     if request.method == "DELETE":
         user.delete()
         return Response("Пользователь удален успешно!")
+
+@require_http_methods(["DELETE"])
+@user_passes_test(lambda u: u.is_staff)
+def delete_task(request, task_id):
+    try:
+        task = Task.objects.get(pk=task_id)
+        if request.user.is_staff:
+            task.delete()
+            return Response({'message': 'Task deleted successfully'})
+        else:
+            task.is_deleted = True
+            task.save()
+            return Response({'message': 'Task soft deleted successfully'})
+    except Task.DoesNotExist:
+        return Response({'error': 'Task not found'})
+
+
 
