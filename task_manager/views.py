@@ -1,13 +1,22 @@
 from rest_framework.response import Response
-from django.http import JsonResponse
-from rest_framework.decorators import api_view, permission_classes
-from django.views.decorators.http import require_http_methods
-from django.contrib.auth.decorators import user_passes_test
+from rest_framework.decorators import api_view
 
-from django.contrib.auth.models import User as us
+from rest_framework import generics, filters
+from django_filters.rest_framework import DjangoFilterBackend
 
 from .serializers import *
 from .models import *
+from .filters import TaskFilter
+
+
+def del_entry(request, queryset):
+    if request.user.is_admin == False:
+        queryset.deleted = True
+        queryset.save()
+        return Response("Удалено успешно!")
+    else:
+        queryset.delete()
+        return Response("Удалено успешно!")
 
 
 #  _________  USER _____________
@@ -51,13 +60,12 @@ def update_user(request, id):
 
 
 @api_view(['GET', 'DELETE'])
-def del_user(request, user_id):
-    user = User.objects.get(pk=user_id)
+def del_user(request, id):
+    user = User.objects.get(pk=id)
     if request.method == "GET":
-        return Response(f"Вы уверены сто хотите удалить пользователя? {user.username}")
+        return Response(f"Вы уверены что хотите удалить пользователя? '{user.username}'")
     if request.method == "DELETE":
-        user.delete()
-        return Response("Пользователь удален успешно!")
+        del_entry(request, user)
 
 
 #  _________  TASK _____________
@@ -74,7 +82,18 @@ def create_task(request):
 def get_all_tasks(request):
     tasks_list = Task.objects.all()
     serializer = TaskSerializer(tasks_list, many=True)
+
+    filter_backends = [DjangoFilterBackend]
+    filterset_class = ['status']
+
     return Response({'tasks': serializer.data})
+
+
+class TaskList(generics.ListAPIView):
+    queryset = Task.objects.all().order_by('created_at')
+    serializer_class = TaskSerializer
+    filter_backends = [filters.OrderingFilter]
+    # filterset_fields = ['status']
 
 
 @api_view(['GET'])
@@ -131,6 +150,29 @@ def update_task(request, id):
     return Response(serializer.errors)
 
 
+# @api_view(['GET', 'DELETE'])
+# def del_task(request, id):
+#     task = Task.objects.get(pk=id)
+#     if request.method == "GET":
+#         return Response(f"Вы уверены сто хотите удалить задачу? {task.title}")
+#     if request.method == "DELETE":
+#         if request.user.is_admin == False:
+#             task.deleted = True
+#             task.save()
+#             return Response("Задача удаленa успешно!")
+#         else:
+#             task.delete()
+#             return Response("Задача удаленa успешно!")
+
+@api_view(['GET', 'DELETE'])
+def del_task(request, id):
+    task = Task.objects.get(pk=id)
+    if request.method == "GET":
+        return Response(f"Вы уверены что хотите удалить задачу? '{task.title}'")
+    if request.method == "DELETE":
+        del_entry(request, task)
+
+
 #  _________  CATEGORY _____________
 
 @api_view(['POST'])
@@ -165,6 +207,15 @@ def update_category(request, id):
     return Response(serializer.errors)
 
 
+@api_view(['GET', 'DELETE'])
+def del_category(request, id):
+    category = Category.objects.get(pk=id)
+    if request.method == "GET":
+        return Response(f"Вы уверены что хотите удалить категорию? '{category.name}'")
+    if request.method == "DELETE":
+        del_entry(request, category)
+
+
 #  _________  PRIORITY _____________
 
 @api_view(['POST'])
@@ -197,3 +248,12 @@ def update_priority(request, id):
         return Response('Приоретет изменен успешно!')
 
     return Response(serializer.errors)
+
+
+@api_view(['GET', 'DELETE'])
+def del_priority(request, id):
+    priority = Priority.objects.get(pk=id)
+    if request.method == "GET":
+        return Response(f"Вы уверены что хотите удалить категорию? '{priority.name}'")
+    if request.method == "DELETE":
+        del_entry(request, priority)

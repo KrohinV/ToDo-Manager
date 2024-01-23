@@ -1,5 +1,4 @@
 from django.db import models
-from django.contrib.auth.models import AbstractUser
 
 
 class Category(models.Model):
@@ -60,6 +59,8 @@ class User(models.Model):
     username = models.CharField(max_length=50)
     email = models.EmailField(max_length=100)
     password = models.CharField(max_length=50)
+    deleted = models.BooleanField(default=False)
+    is_admin = models.BooleanField(default=False)
 
     class Meta:
         verbose_name = 'User'
@@ -67,13 +68,3 @@ class User(models.Model):
 
     def __str__(self):
         return self.username
-
-# class User(AbstractUser):
-#     email = models.EmailField(unique=True)
-#
-#     class Meta:
-#         verbose_name = 'User'
-#         verbose_name_plural = 'Users'
-#
-#     def __str__(self):
-#         return self.username
