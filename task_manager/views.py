@@ -21,6 +21,8 @@ def del_entry(request, queryset):
 
 
 """_________  USER _____________"""
+
+
 # @api_view(['POST'])
 # def create_user(request):
 #     serializer = UserSerializer(data=request.data)
@@ -28,7 +30,6 @@ def del_entry(request, queryset):
 #         serializer.save()
 #         return Response("Пользователь создан успешно")
 #     return Response("Произошла ошибка при создании пользователя")
-
 class CreateUser(generics.ListCreateAPIView):
     queryset = User.objects.all()
     serializer_class = UserSerializer
@@ -39,7 +40,6 @@ class CreateUser(generics.ListCreateAPIView):
 #     users_list = User.objects.all()
 #     serializer = UserSerializer(users_list, many=True)
 #     return Response({'users': serializer.data})
-
 class GetAllUsers(generics.ListAPIView):
     queryset = User.objects.all()
     serializer_class = UserSerializer
@@ -67,9 +67,8 @@ def get_users_by_id(request, id):
 #         return Response('Пользователь изменен успешно!')
 #
 #     return Response(serializer.errors)
-
 class UpdateUser(generics.UpdateAPIView):
-    serializers=User.objects.all()
+    serializers = User.objects.all()
     serializer_class = UserSerializer
     permission_classes = (IsAuthenticated,)
 
@@ -84,6 +83,8 @@ def del_user(request, id):
 
 
 """_________  TASK _____________"""
+
+
 # @api_view(['POST'])
 # def create_task(request):
 #     serializer = TaskSerializer(data=request.data)
@@ -91,7 +92,6 @@ def del_user(request, id):
 #         serializer.save()
 #         return Response("Задача создана успешно")
 #     return Response(serializer.errors)
-
 class CreateTask(generics.ListCreateAPIView):
     queryset = Task.objects.all()
     serializer_class = TaskSerializer
@@ -107,7 +107,6 @@ class CreateTask(generics.ListCreateAPIView):
 #     filterset_class = ['status']
 #
 #     return Response({'tasks': serializer.data})
-
 class TaskList(generics.ListAPIView):
     queryset = Task.objects.all().order_by('created_at')
     serializer_class = TaskSerializer
@@ -168,7 +167,6 @@ def get_task_for_id(request, id):
 #         return Response('Задача изменена успешно!')
 #
 #     return Response(serializer.errors)
-
 class UpdateTask(generics.UpdateAPIView):
     queryset = Task.objects.all()
     serializer_class = TaskSerializer
@@ -186,6 +184,7 @@ def del_task(request, id):
 
 """_________  CATEGORY _____________"""
 
+
 # @api_view(['POST'])
 # def create_category(request):
 #     serializer = CategorySerializer(data=request.data)
@@ -193,7 +192,6 @@ def del_task(request, id):
 #         serializer.save()
 #         return Response("Категория создана успешно")
 #     return Response(serializer.errors)
-
 class CreateCategory(generics.ListCreateAPIView):
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
@@ -221,7 +219,6 @@ def get_category_by_id(request, id):
 #         return Response('Категория изменена успешно!')
 #
 #     return Response(serializer.errors)
-
 class UpdateCategory(generics.UpdateAPIView):
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
@@ -239,6 +236,7 @@ def del_category(request, id):
 
 """_________  PRIORITY _____________"""
 
+
 # @api_view(['POST'])
 # def create_priority(request):
 #     serializer = PrioritySerializer(data=request.data)
@@ -250,6 +248,7 @@ class CreatePriority(generics.ListCreateAPIView):
     queryset = Priority.objects.all()
     serializer_class = PrioritySerializer
     permission_classes = (IsAuthenticated,)
+
 
 @api_view(['GET'])
 def get_priority_by_id(request, id):
@@ -276,6 +275,7 @@ class UpdatePriority(generics.UpdateAPIView):
     queryset = Priority.objects.all()
     serializer_class = PrioritySerializer
     permission_classes = (IsAuthenticated,)
+
 
 @api_view(['GET', 'DELETE'])
 def del_priority(request, id):

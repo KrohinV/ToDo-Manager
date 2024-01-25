@@ -23,7 +23,7 @@ class Category(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
     deleted_at = models.DateTimeField(null=True, blank=True)
     deleted = models.BooleanField(default=False)
-    user = models.ForeignKey(User, verbose_name='пользователь', on_delete=models.CASCADE)
+    #user = models.ForeignKey(User, verbose_name='пользователь', on_delete=models.CASCADE)
 
     class Meta:
         verbose_name = 'Category'
@@ -39,7 +39,7 @@ class Priority(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
     deleted_at = models.DateTimeField(null=True, blank=True)
     deleted = models.BooleanField(default=False)
-    user = models.ForeignKey(User, verbose_name='пользователь', on_delete=models.CASCADE)
+    #user = models.ForeignKey(User, verbose_name='пользователь', on_delete=models.CASCADE)
 
     class Meta:
         verbose_name = 'Priority'
@@ -63,7 +63,7 @@ class Task(models.Model):
     deleted = models.BooleanField(default=False)
     category = models.ForeignKey(Category, on_delete=models.SET_NULL, null=True, blank=True)
     priority = models.ForeignKey(Priority, on_delete=models.SET_NULL, null=True, blank=True)
-    user = models.ForeignKey(User, verbose_name='пользователь', on_delete=models.CASCADE, default=None)
+    #user = models.ForeignKey(User, verbose_name='пользователь', on_delete=models.CASCADE, default=None)
 
     class Meta:
         verbose_name = 'Task'
