@@ -1,6 +1,21 @@
 from django.db import models
 
 
+class User(models.Model):
+    username = models.CharField(max_length=50)
+    email = models.EmailField(max_length=100)
+    password = models.CharField(max_length=50)
+    deleted = models.BooleanField(default=False)
+    is_admin = models.BooleanField(default=False)
+
+    class Meta:
+        verbose_name = 'User'
+        verbose_name_plural = 'Users'
+
+    def __str__(self):
+        return self.username
+
+
 class Category(models.Model):
     name = models.CharField(max_length=100)
     description = models.TextField(null=True)
@@ -8,6 +23,7 @@ class Category(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
     deleted_at = models.DateTimeField(null=True, blank=True)
     deleted = models.BooleanField(default=False)
+    user = models.ForeignKey(User, verbose_name='пользователь', on_delete=models.CASCADE)
 
     class Meta:
         verbose_name = 'Category'
@@ -23,6 +39,7 @@ class Priority(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
     deleted_at = models.DateTimeField(null=True, blank=True)
     deleted = models.BooleanField(default=False)
+    user = models.ForeignKey(User, verbose_name='пользователь', on_delete=models.CASCADE)
 
     class Meta:
         verbose_name = 'Priority'
@@ -46,6 +63,7 @@ class Task(models.Model):
     deleted = models.BooleanField(default=False)
     category = models.ForeignKey(Category, on_delete=models.SET_NULL, null=True, blank=True)
     priority = models.ForeignKey(Priority, on_delete=models.SET_NULL, null=True, blank=True)
+    user = models.ForeignKey(User, verbose_name='пользователь', on_delete=models.CASCADE, default=None)
 
     class Meta:
         verbose_name = 'Task'
@@ -53,18 +71,3 @@ class Task(models.Model):
 
     def __str__(self):
         return self.title
-
-
-class User(models.Model):
-    username = models.CharField(max_length=50)
-    email = models.EmailField(max_length=100)
-    password = models.CharField(max_length=50)
-    deleted = models.BooleanField(default=False)
-    is_admin = models.BooleanField(default=False)
-
-    class Meta:
-        verbose_name = 'User'
-        verbose_name_plural = 'Users'
-
-    def __str__(self):
-        return self.username
